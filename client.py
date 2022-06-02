@@ -25,32 +25,32 @@ def exp_handle(sock):
 ####################################################################################################
 
 def error(code):
-	if code == 'NE001':
-		return 'IrcNameError001: Enter the username without any spaces \nType the username again'
-	elif code == 'NE002':
-		return 'IrcNameError002: A username cannot be empty. Type atleast one character'
-	elif code == 'NE003':
-		return 'IrcNameError003: The maximum length allowed is 20 for the username'
-	elif code == 'NE004':
-		return 'IrcNameError004: The maximum length allowed for roomname is 10'
-	elif code == 'AE001':
-		return 'IrcArgumentError001: Too many arguments typed'
-	elif code == 'AE002':
-		return 'IrcArgumentError002: Too few arguments given'
-	elif code == "AE004":
-		return 'IrcArgumentError004: Invalid value of argument/s for given command.Type the right argument'
-	elif code == 'ME001':
-		return 'IrcMessageError001: Unauthorized message\nYou do not have the authorization for posting this message'
-	elif code == 'ME002':
-		return 'IrcMessageError002: Message size is bigger than the size permitted'
-	elif code == 'CE001':
-		return 'IrcCommandError001: Please enter a valid command.'
-	elif code == 'CE002':
-		return 'IrcCommandError002: This command can only be executed once for given set of arguments'
-	elif code == 'IOE01':
-		return 'IrcIOError01: IRC could not open file\nPlease check the file name and make sure it is in your current working directory'
+	if code == 'NameError1':
+		return 'IrcNameError1: Enter the username without any spaces \nType the username again'
+	elif code == 'NameError2':
+		return 'IrcNameError2: A username cannot be empty. Type atleast one character'
+	elif code == 'NameError3':
+		return 'IrcNameError3: The maximum length allowed is 10 for the username'
+	elif code == 'NameError4':
+		return 'IrcNameError4: The maximum length allowed for roomname is 10'
+	elif code == 'ArgumentError1':
+		return 'IrcArgumentError1: Too many arguments typed'
+	elif code == 'ArgumentError2':
+		return 'IrcArgumentError2: Too few arguments given'
+	elif code == "ArgumentError4":
+		return 'IrcArgumentError4: Invalid value of argument/s for given command.Type the right argument'
+	elif code == 'MessageError1':
+		return 'IrcMessageError1: Unauthorized message\nYou do not have the authorization for posting this message'
+	elif code == 'MessageError2':
+		return 'IrcMessageError2: Message size is bigger than the size permitted'
+	elif code == 'CommandError1':
+		return 'IrcCommandError1: Please enter a valid command.'
+	elif code == 'CommandError2':
+		return 'IrcCommandError2: This command can only be executed once for given set of arguments'
+	elif code == 'FileTransferError':
+		return 'FileError1: File transfer failed\nPlease check the file name and make sure it is in your current working directory'
 	elif code == 'NEEMP':
-		return "IrcCommandError002: Username cannot be empty"
+		return "IrcCommandError2: Username cannot be empty"
 ####################################################################################################
 
 def initializer(handler_socket):
@@ -62,12 +62,12 @@ def initializer(handler_socket):
 		if len(uid)==0:
 			print(error('NEEMP'))
 		if len(uid.split(' ')) > 1:
-			print(error('NE001'))
+			print(error('NameError1'))
 		elif len(uid.split(' ')) < 1:
-			print(error('NE002'))
+			print(error('NameError2'))
 		elif len(uid.split(' ')) == 1:
-			if len(uid) > 20:
-				print(error('NE003'))
+			if len(uid) > 10:
+				print(error('NameError3'))
 			else:
 				try:
 					handler_socket.send(bytes('register '+uid, 'utf-8'))
@@ -91,7 +91,7 @@ def message_routine(handler_socket, command):
 	header = ' '.join(command[0:2])
 	message = ' '.join(command[2:])
 	if len(message) > 448:
-		print(error('ME002'))
+		print(error('MessageError2'))
 		if input('\nSend anyway ? Y/N') == (N or n):
 			return
 	try:
@@ -129,7 +129,7 @@ def transfer_routine(handler_socket, command):
 		File = fh.read()
 		fh.close()
 	except IOError:
-		print(error('IOE01'))
+		print(error('FileTransferError'))
 	else:
 		try:
 			handler_socket.send(bytes(' '.join(command), 'utf-8'))
@@ -166,7 +166,7 @@ def secure_routine(handler_socket, command):
 ####################################################################################################
 
 def help():
-	print("\nTo create a new room or to join an existing room:\n	join-room					Usage: 	join-room <room-name>\n\nTo exit from a room:\n	exit-room					Usage: 	exit-room <room-name>\n\nSend message to a room:\n	chat-room					Usage: 	chat-room <room-name> <your message here>\n\nTo send a private message to another user within same or different room:\n	pvt-msg						Usage: 	pvt-msg <recipient-name> <your message here>\n\nTo send a secure message to another user:\n	secure-msg					Usage:	secure-msg <recipient-name> <key> <your message here>\n\nTo enter decryption key:\n	decryption-key					Usage:	decryption-key <key>\n\nList all the available rooms, active users, or members of a room:\n	list						Usage: 	list rooms / list users / list members <room-name>\n\nList all the rooms subscribed by the user:\n	my-rooms					Usage: 	my-rooms\n\nTo set the file transfer key for receiving files:\n	set-file-transfer-key				Usage: 	set-file-transfer-key <key>\n\nTo send a file to another user:\n	send-file					Usage: 	send-file <file-name.extension> <recipient-name>\n\nBroadcast message to all active users:\n	broadcast					Usage:	broadcast all <your message here>\n\nTo quit IRC:\n	quit-irc					Usage: 	quit-irc\n\nTo view this message:\n	help						Usage:	help")
+	print("\nTo create a new room or to join an existing room:\n	join-room					Usage: 	join-room [room-name]\n\nTo exit from a room:\n	exit-room					Usage: 	exit-room [room-name]\n\nSend message to a room:\n	chat-room					Usage: 	chat-room [room-name] [message]\n\nTo send a private message to another user within same or different room:\n	pvt-msg						Usage: 	pvt-msg [recipient-name] [message]\n\nTo send a secure message to another user:\n	secure-msg					Usage:	secure-msg [recipient-name] [key] [message]\n\nTo enter decryption key:\n	decryption-key					Usage:	decryption-key [key]\n\nList all the available rooms, active users, or members of a room:\n	list						Usage: 	list rooms / list users / list members [room-name]\n\nList all the rooms joined by the user:\n	my-rooms					Usage: 	my-rooms\n\nTo set the file transfer key for receiving files:\n	set-file-transfer-key				Usage: 	set-file-transfer-key [key]\n\nTo send a file to another user:\n	send-file					Usage: 	send-file [file-name.extension] [recipient-name]\n\nBroadcast message to all active users:\n	broadcast					Usage:	broadcast all [message]\n\nTo quit IRC:\n	quit-irc					Usage: 	quit-irc\n\nTo view this message:\n	help						Usage:	help")
 
 ####################################################################################################
 
@@ -177,7 +177,7 @@ def server_handler(handler_socket, uid):
 		intent = cmd_split[0]
 		if intent == 'quit-irc':
 			if len(cmd_split) > 1:
-				print(error('AE001')+'\nUsage: quit-irc')
+				print(error('ArgumentError1')+'\nUsage: quit-irc')
 			else:
 				try:
 					handler_socket.send(bytes(command, 'utf-8'))
@@ -191,12 +191,12 @@ def server_handler(handler_socket, uid):
 
 		elif intent == 'join-room':
 			if len(cmd_split) < 2 or len(cmd_split[1].strip()) == 0:
-				print(error('AE002')+'\nUsage: join-room <room-name>')
+				print(error('ArgumentError2')+'\nUsage: join-room <room-name>')
 			elif len(cmd_split) > 2:
-				print(error('AE001')+'\nUsage: join-room <room-name>')
+				print(error('ArgumentError1')+'\nUsage: join-room <room-name>')
 			elif len(cmd_split) == 2:
 				if len(cmd_split[1]) > 10:
-					print(error('NE004'))
+					print(error('NameError4'))
 				else:
 					if cmd_split[1] not in subscription_list:
 						try:
@@ -208,13 +208,13 @@ def server_handler(handler_socket, uid):
 						else:
 							subscription_list.append(cmd_split[1])
 					else:
-						print(error('CE002'))
+						print(error('CommandError2'))
 
 		elif intent == 'exit-room':
 			if len(cmd_split) < 2:
-				print(error('AE002')+'\nUsage: exit-room <room-name>')
+				print(error('ArgumentError2')+'\nUsage: exit-room <room-name>')
 			elif len(cmd_split) > 2:
-				print(error('AE001')+'\nUsage: exit-room <room-name>')
+				print(error('ArgumentError1')+'\nUsage: exit-room <room-name>')
 			elif len(cmd_split) == 2:
 				if cmd_split[1] in subscription_list:
 					subscription_list.remove(cmd_split[1])
@@ -224,26 +224,26 @@ def server_handler(handler_socket, uid):
 				#	except OSError:
 						exp_handle(handler_socket)
 				else:
-					print(error("AE004"))
+					print(error("ArgumentError4"))
 
 		elif intent == 'chat-room':
 			if len(cmd_split) < 3:
-				print(error('AE002')+'\nUsage: chat-room <room-name> <your message here>')
+				print(error('ArgumentError2')+'\nUsage: chat-room <room-name> <your message here>')
 			else:
 				if cmd_split[1] in subscription_list:
 					message_routine(handler_socket, cmd_split)
 				else:
-					print(error('ME001')+'\nPlease join the room to send messages')
+					print(error('MessageError1')+'\nPlease join the room to send messages')
 
 		elif intent == 'pvt-msg':
 			if len(cmd_split) < 3:
-				print(error('AE002')+'\nUsage: pvt-msg <recipient-name> <your message here>')
+				print(error('ArgumentError2')+'\nUsage: pvt-msg <recipient-name> <your message here>')
 			else:
 				message_routine(handler_socket, cmd_split)
 
 		elif intent == 'secure-msg':
 			if len(cmd_split) < 4:
-				print(error('AE002')+'\nUsage: secure-msg <recipient-name> <key> <your message here>')
+				print(error('ArgumentError2')+'\nUsage: secure-msg <recipient-name> <key> <your message here>')
 			else:
 				message = ' '.join(cmd_split[3:])
 				print('\nSecure Messaging is only available on linux servers. The secure message code has been commented out so as to run the project on Windows host. To test secure messaging on linux, the required code could be un-commented as directed at the top of the source code.\n')
@@ -251,31 +251,31 @@ def server_handler(handler_socket, uid):
 
 		elif intent == 'list':
 			if len(cmd_split) > 3:
-				print(error('AE001') + '\nUsage: list rooms/users OR list members <room-name>')
+				print(error('ArgumentError1') + '\nUsage: list rooms/users OR list members <room-name>')
 			elif len(cmd_split) < 2:
-				print(error('AE002') + '\nUsage: list rooms/users OR list members <room-name>')
+				print(error('ArgumentError2') + '\nUsage: list rooms/users OR list members <room-name>')
 			elif cmd_split[1] == 'members':
 				if len(cmd_split) < 3:
-					print(error('AE002') + '\nUsage: list members <room-name>')
+					print(error('ArgumentError2') + '\nUsage: list members <room-name>')
 				else:
 					list_routine(handler_socket, command)
 			elif cmd_split[1] == 'rooms' or 'users':
 				if len(cmd_split) > 2:
-					print(error('AE001') + '\nUsage: list rooms/users')
+					print(error('ArgumentError1') + '\nUsage: list rooms/users')
 				else:
 					list_routine(handler_socket, command)
 			else:
-				print(error('AE004'))
+				print(error('ArgumentError4'))
 
 		elif intent == 'my-rooms':
 			if len(cmd_split) > 1:
-				print(error('AE001') + '\nUsage: my-rooms')
+				print(error('ArgumentError1') + '\nUsage: my-rooms')
 			else:
 				print('\n\tMy Rooms: ', str(subscription_list)[1:-1])
 
 		elif intent == 'set-file-transfer-key':
 			if len(cmd_split) < 2:
-				print(error('AE002') + '\nUsage: set-file-transfer-key <key>')
+				print(error('ArgumentError2') + '\nUsage: set-file-transfer-key <key>')
 			else:
 				if len(' '.join(cmd_split[1:])) > 10:
 					print('The maximum key size allowed is 10 characters\n Enter the correct key')
@@ -289,15 +289,15 @@ def server_handler(handler_socket, uid):
 
 		elif intent == 'send-file':
 			if len(cmd_split) > 3:
-				print(error('AE001') + '\nUsage: send-file <file-name.extension> <recipient-name>')
+				print(error('ArgumentError1') + '\nUsage: send-file <file-name.extension> <recipient-name>')
 			elif len(cmd_split) < 3:
-				print(error('AE002') + '\nUsage: send-file <file-name.extension> <recipient-name>')
+				print(error('ArgumentError2') + '\nUsage: send-file <file-name.extension> <recipient-name>')
 			else:
 				transfer_routine(handler_socket, cmd_split)
 
 		elif intent == 'broadcast':
 			if len(cmd_split) < 3:
-				print(error('AE002') + '\nUsage: broadcast all <your message here>')
+				print(error('ArgumentError2') + '\nUsage: broadcast all <your message here>')
 			else:
 				message_routine(handler_socket, cmd_split)
 
@@ -307,11 +307,11 @@ def server_handler(handler_socket, uid):
 
 		elif intent == 'help':
 			if len(cmd_split) > 1:
-				print(error('AE001') + '\nUsage: help')
+				print(error('ArgumentError1') + '\nUsage: help')
 			else:
 				help()
 		else:
-			print(error('CE001'))
+			print(error('CommandError1'))
 
 ####################################################################################################
 

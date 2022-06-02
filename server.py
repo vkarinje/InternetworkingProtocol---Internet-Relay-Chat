@@ -37,14 +37,14 @@ def initializer(handler_socket, port_h):
                     port_map[port_m] = argument
                     status = 'registered'
                     connection_h.send(bytes(status, 'utf-8'))
-                    connection_h.send(b'\nRegistered Successfully')
+                    connection_h.send(b'\nYou are registered successfully!!')
                 else:
                     list_lock.release()
                     connection_h.send(bytes(status, 'utf-8'))
                     connection_h.send(
-                        b'\nIrcRegError001: This username already exists.\nPlease try with a different username')
+                        b'\nIrcRegistrationError1: This username is already in use.\nPlease enter  a different username')
             elif intent != 'register':
-                connection_h.send(b'\nPlease register with a username to proceed')
+                connection_h.send(b'\nPlease enter a username to proceed')
         print(user_list)
         client_handler(connection_h, port_m)
 
@@ -205,7 +205,7 @@ def client_handler(connection_h, port_m):
             intent = command[0]
 
         if intent == 'quit-irc':
-            send_msg('\nThank You for using IRC\nGoodbye!', uid)
+            send_msg('\nYou are exiting out of IRC\nHope you had fun!', uid)
             quit_routine(connection_h, uid)
             break
 
@@ -235,7 +235,7 @@ def client_handler(connection_h, port_m):
             else:
                 member = command[1]
                 if member not in user_list:
-                    msg = '\nIrcArgumentError003: Username ' + member + ' does not exist\n' + uid + ': '
+                    msg = '\nIrcArgumentError3: Username ' + member + ' not found\n' + uid + ': '
                     send_msg(msg, uid)
                 else:
                     msg = '\n' + uid + ' says: ' + message + '\n' + uid + ':'
@@ -253,7 +253,7 @@ def client_handler(connection_h, port_m):
             else:
                 member = command[1]
                 if member not in user_list:
-                    msg = '\nIrcArgumentError003: Username ' + member + ' does not exist\n' + uid + ': '
+                    msg = '\nIrcArgumentError3: Username ' + member + ' not found\n' + uid + ': '
                     send_msg(msg, uid)
                 else:
                     secure_routine(uid, member, message, size)
@@ -268,24 +268,24 @@ def client_handler(connection_h, port_m):
                 list_routine(connection_h, user_list.keys())
             elif command[1] == 'members':
                 if command[2] not in hallway:
-                    msg = '\nIrcArgumentError003: Room ' + command[2] + ' does not exist\n' + command[-1] + ': '
+                    msg = '\nIrcArgumentError3: Room ' + command[2] + ' not found\n' + command[-1] + ': '
                     send_msg(msg, uid)
                 else:
                     list_routine(connection_h, hallway[command[2]])
 
         elif intent == 'set-file-transfer-key':
             file_transfer_keys[uid] = ' '.join(command[1:])
-            connection_h.send(b'Your file transfer key was successfully set\n')
+            connection_h.send(b'File transfer key set successfully\n')
             print(file_transfer_keys)
 
         elif intent == 'send-file':
             member = command[2]
             if member not in user_list:
-                msg = '\nIrcArgumentError003: Username ' + member + ' does not exist\n' + uid + ': '
+                msg = '\nIrcArgumentError3: Username ' + member + ' not found\n' + uid + ': '
                 send_msg(msg, uid)
                 connection_h.send(b'Failed')
             elif member not in file_transfer_keys:
-                msg = 'IrcFileTransferError001: ' + member + ' has not set a file transfer key\n'
+                msg = 'IrcFileTransferError1: ' + member + ' has not set a file transfer key\n'
                 send_msg(msg, uid)
                 connection_h.send(b'Failed')
             else:
@@ -337,3 +337,4 @@ while True:
     start_new_thread(initializer, (handler_socket, port_h,))
 
     port_h += 5
+    
