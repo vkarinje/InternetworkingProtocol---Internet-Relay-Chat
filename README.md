@@ -1,4 +1,4 @@
-# Internetworking Protocols
+# Internet Relay Chat
 
 ## Project Overview
 In this project we created a single server architecture-based application utilizing the python code. Implemented multi-user functionality, enabling users to create and manage groups, as well as broadcast messages within them. IRC client communicates with IRC server on Internet. First, user have to log on to the server using a client and then pick the channel on which user want to broadcast message. 
